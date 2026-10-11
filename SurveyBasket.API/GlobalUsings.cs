@@ -6,3 +6,7 @@ global using SurveyBasket.API.Contracts.Requests;
 global using SurveyBasket.API.Contracts.Responses;
 global using SurveyBasket.API;
 global using SurveyBasket.API.Mapping;
+global using FluentValidation;
+global using SurveyBasket.API.Services.Implementations;
+global using SurveyBasket.API.Validators;
+global using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;

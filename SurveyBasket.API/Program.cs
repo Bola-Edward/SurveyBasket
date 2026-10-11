@@ -1,13 +1,4 @@
-
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-
-TypeAdapterConfig.GlobalSettings.Scan(typeof(PollMappingConfig).Assembly);
-
-builder.Services.AddOpenApi();
 
 builder.Services.AddServices();
 
