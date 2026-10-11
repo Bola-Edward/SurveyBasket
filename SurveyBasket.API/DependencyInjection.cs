@@ -8,6 +8,7 @@ public static class DependencyInjection
             throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+
         services.AddControllers();
         services.AddSwaggerServices();
         services.AddMapasterConfiguration();
@@ -34,7 +35,7 @@ public static class DependencyInjection
         // To Add Any Other Validators
         services
             .AddFluentValidationAutoValidation()
-            .AddValidatorsFromAssemblyContaining<CreatePollRequestValidator>();
+            .AddValidatorsFromAssemblyContaining<PollRequestValidator>();
         return services;
     }
 }
