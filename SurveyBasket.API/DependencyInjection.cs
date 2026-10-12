@@ -1,4 +1,5 @@
-﻿namespace SurveyBasket.API;
+﻿
+namespace SurveyBasket.API;
 
 public static class DependencyInjection
 {
@@ -13,6 +14,9 @@ public static class DependencyInjection
         services.AddSwaggerServices();
         services.AddMapasterConfiguration();
         services.AddFluentValidationConfiguration();
+        services.AddAuthConfiguration();
+
+        services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPollService, PollService>();
         return services;
     }
@@ -36,6 +40,37 @@ public static class DependencyInjection
         services
             .AddFluentValidationAutoValidation()
             .AddValidatorsFromAssemblyContaining<PollRequestValidator>();
+        return services;
+    }
+
+
+    public static IServiceCollection AddAuthConfiguration(this IServiceCollection services)
+    {
+        services.AddSingleton<IJWTProvider, JWTProvider>();
+
+        services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+        }).AddJwtBearer(o =>
+        {
+            o.SaveToken = true;
+            o.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ggEcWxr6SjhBSgO6zk7SagMjqy2bC2xR")),
+                ValidIssuer = "SurveyBasketApp",
+                ValidAudience = "SurveyBasketApp users"
+            };
+        });
+
         return services;
     }
 }
