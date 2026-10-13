@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.Data;
-
+﻿
 namespace SurveyBasket.API.Controllers;
 
 [ApiController]
@@ -11,13 +10,10 @@ public class AuthController(IAuthService authService) : ControllerBase
     [HttpPost("token")]
     public async Task<IActionResult> GetToken([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
-        var result = await _authService.GetTokenAsync(
-            request.Email,
-            request.Password,
-            cancellationToken);
+        var result = await _authService.GetTokenAsync(request.Email, request.Password, cancellationToken);
 
         if (result is null)
-            return Unauthorized();
+            return BadRequest("Invalid Email or Password");
 
         return Ok(result);
     }

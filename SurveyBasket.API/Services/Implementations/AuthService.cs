@@ -1,9 +1,9 @@
 ﻿namespace SurveyBasket.API.Services.Implementations;
 
-public class AuthService(UserManager<ApplicationUser> userManager, IJWTProvider jwtProvider) : IAuthService
+public class AuthService(UserManager<ApplicationUser> userManager, IJwtProvider jwtProvider) : IAuthService
 {
     private readonly UserManager<ApplicationUser> _userManager = userManager;
-    private readonly IJWTProvider _jwtProvider = jwtProvider;
+    private readonly IJwtProvider _jwtProvider = jwtProvider;
 
     public async Task<AuthResponse?> GetTokenAsync(string email, string password, CancellationToken cancellationToken)
     {

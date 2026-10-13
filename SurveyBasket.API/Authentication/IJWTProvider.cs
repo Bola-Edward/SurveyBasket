@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.API.Authentication;
 
-public interface IJWTProvider
+public interface IJwtProvider
 {
     (string token, int expiresIn) GenerateToken(ApplicationUser applicationUser);
 }

@@ -14,7 +14,7 @@ public static class DependencyInjection
         services.AddSwaggerServices();
         services.AddMapasterConfiguration();
         services.AddFluentValidationConfiguration();
-        services.AddAuthConfiguration();
+        services.AddAuthConfiguration(configuration);
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPollService, PollService>();
@@ -44,12 +44,23 @@ public static class DependencyInjection
     }
 
 
-    public static IServiceCollection AddAuthConfiguration(this IServiceCollection services)
+    public static IServiceCollection AddAuthConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddSingleton<IJWTProvider, JWTProvider>();
 
         services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
+
+        services.AddSingleton<IJwtProvider, JwtProvider>();
+
+        //services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+
+        services.AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(JwtOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+
+        var jwtSettings = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>();
 
         services.AddAuthentication(options =>
         {
@@ -65,9 +76,9 @@ public static class DependencyInjection
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ggEcWxr6SjhBSgO6zk7SagMjqy2bC2xR")),
-                ValidIssuer = "SurveyBasketApp",
-                ValidAudience = "SurveyBasketApp users"
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings?.Key!)),
+                ValidIssuer = jwtSettings?.Issuer,
+                ValidAudience = jwtSettings?.Audience
             };
         });
 
