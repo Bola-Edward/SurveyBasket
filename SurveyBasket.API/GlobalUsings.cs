@@ -27,3 +27,5 @@ global using Microsoft.Extensions.Options;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Identity.Data;
 global using System.ComponentModel.DataAnnotations;
+global using System.Security.Cryptography;
+global using SurveyBasket.API.Contracts.Authentication.Requests;

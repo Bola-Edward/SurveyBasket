@@ -31,4 +31,87 @@ public class JwtProvider(IOptions<JwtOptions> jwtOptions) : IJwtProvider
 
         return (token: new JwtSecurityTokenHandler().WriteToken(token), expiresIn: _jwtOptions.ExpiresInMinutes * 60);
     }
+
+
+    public string? ValidateToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        var symmetricSecurityKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(_jwtOptions.Key));
+
+        try
+        {
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                IssuerSigningKey = symmetricSecurityKey,
+                ValidateIssuerSigningKey = true,
+
+                ValidIssuer = _jwtOptions.Issuer,
+                ValidateIssuer = true,
+
+                ValidAudience = _jwtOptions.Audience,
+                ValidateAudience = true,
+
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+
+            }, out SecurityToken validatedToken);
+
+            var jwtToken = (JwtSecurityToken)validatedToken;
+
+            return jwtToken.Claims
+                .FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        }
+        catch (SecurityTokenException)
+        {
+            return null;
+        }
+        catch (ArgumentException)
+        {
+            return null;
+        }
+    }
+
+
+    public string? GetUserIdFromExpiredToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        var symmetricSecurityKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(_jwtOptions.Key));
+
+        try
+        {
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                IssuerSigningKey = symmetricSecurityKey,
+                ValidateIssuerSigningKey = true,
+
+                ValidIssuer = _jwtOptions.Issuer,
+                ValidateIssuer = true,
+
+                ValidAudience = _jwtOptions.Audience,
+                ValidateAudience = true,
+
+                ValidateLifetime = false,
+                ClockSkew = TimeSpan.Zero
+            }, out SecurityToken validatedToken);
+
+            var jwtToken = (JwtSecurityToken)validatedToken;
+
+            return jwtToken.Claims
+                .FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        }
+        catch (SecurityTokenException)
+        {
+            return null;
+        }
+        catch (ArgumentException)
+        {
+            return null;
+        }
+    }
+
+
 }
