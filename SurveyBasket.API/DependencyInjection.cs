@@ -1,5 +1,4 @@
-﻿
-namespace SurveyBasket.API;
+﻿namespace SurveyBasket.API;
 
 public static class DependencyInjection
 {
@@ -9,8 +8,14 @@ public static class DependencyInjection
             throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-
         services.AddControllers();
+
+        services.AddCors(options => options.AddDefaultPolicy(builder => builder
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .WithOrigins(configuration.GetSection("AllowedOrigins").Get<string[]>()!))
+        );
+
         services.AddSwaggerServices();
         services.AddMapasterConfiguration();
         services.AddFluentValidationConfiguration();
