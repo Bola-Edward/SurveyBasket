@@ -21,7 +21,10 @@ public class PollsController(IPollService pollService) : ControllerBase
         var result = await _pollService.GetByIdAsync(id, cancellationToken);
 
         if (result.IsFailure)
-            return Problem(statusCode: StatusCodes.Status404NotFound, title: result.Error.Code, detail: result.Error.Description);
+            return Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "Poll not found",
+                detail: result.Error.Description);
 
         return Ok(result.Value);
     }
@@ -41,7 +44,10 @@ public class PollsController(IPollService pollService) : ControllerBase
         var result = await _pollService.UpdateAsync(id, request, cancellationToken);
 
         if (result.IsFailure)
-            return NotFound(result.Error);
+            return Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "Poll not found",
+                detail: result.Error.Description);
 
         return NoContent();
     }
@@ -51,7 +57,10 @@ public class PollsController(IPollService pollService) : ControllerBase
     {
         var result = await _pollService.DeleteAsync(id, cancellationToken);
         if (result.IsFailure)
-            return NotFound(result.Error);
+            return Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "Poll not found",
+                detail: result.Error.Description);
 
         return NoContent();
     }
@@ -61,7 +70,11 @@ public class PollsController(IPollService pollService) : ControllerBase
     {
         var result = await _pollService.TogglePublishStatusAsync(id, cancellationToken);
         if (result.IsFailure)
-            return NotFound(result.Error);
+            if (result.IsFailure)
+                return Problem(
+                    statusCode: StatusCodes.Status404NotFound,
+                    title: "Poll not found",
+                    detail: result.Error.Description);
 
         return NoContent();
     }
