@@ -7,44 +7,37 @@ public class AuthController(IAuthService authService) : ControllerBase
 {
     private readonly IAuthService _authService = authService;
 
-    [HttpPost("token")]
-    public async Task<IActionResult> GetToken([FromBody] Contracts.Authentication.Requests.LoginRequest request, CancellationToken cancellationToken)
+    [HttpPost("")]
+    public async Task<IActionResult> LoginAsync([FromBody] Contracts.Authentication.Requests.LoginRequest request, CancellationToken cancellationToken)
     {
         var result = await _authService.GetTokenAsync(request.Email, request.Password, cancellationToken);
 
-        if (result is null)
-            return BadRequest("Invalid Email or Password");
+        if (result.IsFailure)
+            return Unauthorized(result.Error);
 
-        return Ok(result);
+        return Ok(result.Value);
     }
 
 
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshAsync([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
     {
-        var authResponse = await _authService.GetRefreshTokensAsync(request.Token, request.RefreshToken, cancellationToken);
+        var result = await _authService.GetRefreshTokensAsync(request.Token, request.RefreshToken, cancellationToken);
 
-        if (authResponse is null)
-            return BadRequest("Invalid Token");
+        if (result.IsFailure)
+            return Unauthorized(result.Error);
 
-        return Ok(authResponse);
+        return Ok(result.Value);
     }
 
     [HttpPut("revoke-refresh-token")]
     public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
     {
-        var isRevoked = await _authService.RevokeRefreshTokenAsync(request.Token, request.RefreshToken, cancellationToken);
+        var result = await _authService.RevokeRefreshTokenAsync(request.Token, request.RefreshToken, cancellationToken);
 
-        if (!isRevoked)
-            return BadRequest("Operation Failed");
+        if (result.IsFailure)
+            return Unauthorized(result.Error);
 
         return NoContent();
-    }
-
-    [Authorize]
-    [HttpGet("test")]
-    public IActionResult Test()
-    {
-        return Ok(new { Message = "Authenticated successfully!" });
     }
 }

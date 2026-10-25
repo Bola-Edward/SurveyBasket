@@ -29,3 +29,5 @@ global using Microsoft.AspNetCore.Identity.Data;
 global using System.ComponentModel.DataAnnotations;
 global using System.Security.Cryptography;
 global using SurveyBasket.API.Contracts.Authentication.Requests;
+global using SurveyBasket.API.Abstractions;
+global using SurveyBasket.API.Errors;
