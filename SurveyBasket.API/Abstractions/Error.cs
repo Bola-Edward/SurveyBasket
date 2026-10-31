@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.API.Abstractions;
 
-public record Error(string Code, string Description)
+public record Error(string Code, string Description, int? StatusCode)
 {
-    public static readonly Error None = new Error(String.Empty, String.Empty);
+    public static readonly Error None = new Error(String.Empty, String.Empty, null);
 }

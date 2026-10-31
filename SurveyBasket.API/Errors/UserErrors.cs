@@ -3,5 +3,5 @@
 public static class UserErrors
 {
     public static readonly Error InvalidCredentials =
-        new Error("User.InvalidCredentials", "Invalid Email/Password");
+        new Error("User.InvalidCredentials", "Invalid Email/Password", StatusCodes.Status401Unauthorized);
 }

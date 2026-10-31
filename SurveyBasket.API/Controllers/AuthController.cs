@@ -13,10 +13,7 @@ public class AuthController(IAuthService authService) : ControllerBase
         var result = await _authService.GetTokenAsync(request.Email, request.Password, cancellationToken);
 
         if (result.IsFailure)
-            return Problem(
-                statusCode: StatusCodes.Status401Unauthorized,
-                title: "Authentication failed",
-                detail: result.Error.Description);
+            return result.ToProblem();
 
         return Ok(result.Value);
     }
@@ -27,10 +24,7 @@ public class AuthController(IAuthService authService) : ControllerBase
         var result = await _authService.GetRefreshTokensAsync(request.Token, request.RefreshToken, cancellationToken);
 
         if (result.IsFailure)
-            return Problem(
-                statusCode: StatusCodes.Status401Unauthorized,
-                title: "Token refresh failed",
-                detail: result.Error.Description);
+            return result.ToProblem();
 
         return Ok(result.Value);
     }
@@ -41,11 +35,9 @@ public class AuthController(IAuthService authService) : ControllerBase
         var result = await _authService.RevokeRefreshTokenAsync(request.Token, request.RefreshToken, cancellationToken);
 
         if (result.IsFailure)
-            return Problem(
-                statusCode: StatusCodes.Status401Unauthorized,
-                title: "Token revocation failed",
-                detail: result.Error.Description);
+            return result.ToProblem();
 
         return NoContent();
     }
+
 }
