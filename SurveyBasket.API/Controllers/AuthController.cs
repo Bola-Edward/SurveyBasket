@@ -10,6 +10,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     [HttpPost("")]
     public async Task<IActionResult> LoginAsync([FromBody] Contracts.Authentication.Requests.LoginRequest request, CancellationToken cancellationToken)
     {
+
         var result = await _authService.GetTokenAsync(request.Email, request.Password, cancellationToken);
 
         if (result.IsFailure)
