@@ -16,5 +16,15 @@ public class PollConfiguration : IEntityTypeConfiguration<Poll>
             .HasMaxLength(1000);
 
         builder.HasQueryFilter(p => !p.IsDeleted);
+
+        builder.HasOne(x => x.CreatedBy)
+            .WithMany()
+            .HasForeignKey(x => x.CreatedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.UpdatedBy)
+            .WithMany()
+            .HasForeignKey(x => x.UpdatedById)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

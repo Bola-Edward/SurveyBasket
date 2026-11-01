@@ -11,4 +11,6 @@ public sealed class Poll : AuditableEntity
     public bool IsDeleted { get; set; }
     public DateTime? DeletedOnUtc { get; set; }
 
+    public ICollection<Question> Questions { get; set; } = [];
+
 }
