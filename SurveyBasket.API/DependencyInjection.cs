@@ -23,6 +23,7 @@ public static class DependencyInjection
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPollService, PollService>();
+        services.AddScoped<IQuestionService, QuestionService>();
 
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
@@ -39,7 +40,7 @@ public static class DependencyInjection
 
     public static IServiceCollection AddMapasterConfiguration(this IServiceCollection services)
     {
-        TypeAdapterConfig.GlobalSettings.Scan(typeof(PollMappingConfig).Assembly);
+        TypeAdapterConfig.GlobalSettings.Scan(typeof(MappingConfiguration).Assembly);
         return services;
     }
 

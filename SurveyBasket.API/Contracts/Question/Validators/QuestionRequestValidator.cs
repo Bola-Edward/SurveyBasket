@@ -9,17 +9,18 @@ public class QuestionRequestValidator : AbstractValidator<QuestionRequest>
             .NotEmpty()
             .MaximumLength(1000);
 
-        RuleFor(x => x.Answers)
-            .NotEmpty()
-            .Must(answers => answers.Count >= 2)
-            .WithMessage("A question must have at least two answers.");
-
         RuleForEach(x => x.Answers)
             .NotEmpty()
             .MaximumLength(1000);
 
         RuleFor(x => x.Answers)
+            .Cascade(CascadeMode.Stop)
+            .NotNull()
+            .NotEmpty()
+            .Must(answers => answers.Count >= 2)
+            .WithMessage("A question must have at least two answers.")
             .Must(answers => answers.Distinct(StringComparer.OrdinalIgnoreCase).Count() == answers.Count)
             .WithMessage("Duplicate answers are not allowed.");
+
     }
 }

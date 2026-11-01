@@ -1,6 +1,4 @@
-﻿
-
-namespace SurveyBasket.API.Contracts.Question.Responses;
+﻿namespace SurveyBasket.API.Contracts.Question.Responses;
 
 public record QuestionResponse(
     int Id,

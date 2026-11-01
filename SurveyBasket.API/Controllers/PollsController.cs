@@ -64,8 +64,7 @@ public class PollsController(IPollService pollService) : ControllerBase
     {
         var result = await _pollService.TogglePublishStatusAsync(id, cancellationToken);
         if (result.IsFailure)
-            if (result.IsFailure)
-                return result.ToProblem();
+            return result.ToProblem();
 
         return NoContent();
     }
