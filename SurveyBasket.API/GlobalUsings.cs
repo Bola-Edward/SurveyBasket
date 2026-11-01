@@ -31,3 +31,6 @@ global using System.Security.Cryptography;
 global using SurveyBasket.API.Contracts.Authentication.Requests;
 global using SurveyBasket.API.Abstractions;
 global using SurveyBasket.API.Errors;
+global using SurveyBasket.API.Contracts.Answer.Responses;
+global using SurveyBasket.API.Contracts.Question.Requests;
+global using SurveyBasket.API.Contracts.Answer.Requests;
