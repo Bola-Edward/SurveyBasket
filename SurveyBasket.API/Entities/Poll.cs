@@ -12,5 +12,6 @@ public sealed class Poll : AuditableEntity
     public DateTime? DeletedOnUtc { get; set; }
 
     public ICollection<Question> Questions { get; set; } = [];
+    public ICollection<Vote> Votes { get; set; } = [];
 
 }
