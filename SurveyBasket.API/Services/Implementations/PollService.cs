@@ -14,6 +14,19 @@ public class PollService(ApplicationDbContext context) : IPollService
         return polls.Adapt<IEnumerable<PollResponse>>();
     }
 
+    public async Task<IEnumerable<PollResponse>> GetCurrentAsync(
+    CancellationToken cancellationToken = default)
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        var polls = await _context.polls
+            .Where(x => x.IsPublished && x.StartsAt <= today && x.EndsAt >= today)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        return polls.Adapt<List<PollResponse>>();
+    }
+
     public async Task<Result<PollResponse>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         var poll = await _context.polls.FindAsync(id, cancellationToken);

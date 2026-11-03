@@ -23,6 +23,32 @@ public class QuestionService(ApplicationDbContext context) : IQuestionService
         return Result<IEnumerable<QuestionResponse>>.Success(response);
     }
 
+    public async Task<Result<IEnumerable<QuestionResponse>>> GetAvailableAsync(int pollId, CancellationToken cancellationToken = default)
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        var poll = await _context.polls
+            .SingleOrDefaultAsync(
+                x => x.Id == pollId &&
+                     x.IsPublished &&
+                     x.StartsAt <= today &&
+                     x.EndsAt >= today,
+                cancellationToken);
+
+        if (poll is null)
+            return Result<IEnumerable<QuestionResponse>>.Failure(PollErrors.NotFound);
+
+        var questions = await _context.Questions
+            .Where(x => x.PollId == pollId)
+            .Include(x => x.Answers)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        var response = questions.Adapt<List<QuestionResponse>>();
+
+        return Result<IEnumerable<QuestionResponse>>.Success(response);
+    }
+
     public async Task<Result<QuestionResponse>> AddAsync(int pollId, QuestionRequest request, CancellationToken cancellationToken)
     {
         var pollIsExist = await _context.polls.AnyAsync(p => p.Id == pollId, cancellationToken);
