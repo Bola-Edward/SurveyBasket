@@ -35,3 +35,4 @@ global using SurveyBasket.API.Contracts.Answer.Responses;
 global using SurveyBasket.API.Contracts.Question.Requests;
 global using SurveyBasket.API.Contracts.Answer.Requests;
 global using SurveyBasket.API.Extensions;
+global using Serilog;
