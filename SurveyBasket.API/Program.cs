@@ -1,4 +1,6 @@
 
+using Microsoft.Extensions.Caching.Hybrid;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddServices(builder.Configuration);

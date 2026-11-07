@@ -1,9 +1,12 @@
 ﻿
+using Microsoft.Extensions.Caching.Hybrid;
+
 namespace SurveyBasket.API.Services.Implementations;
 
-public class PollService(ApplicationDbContext context) : IPollService
+public class PollService(ApplicationDbContext context, HybridCache hybridCache) : IPollService
 {
     private readonly ApplicationDbContext _context = context;
+    private readonly HybridCache _hybridCache = hybridCache;
 
     public async Task<IEnumerable<PollResponse>> GetAllAsync(CancellationToken cancellationToken = default)
     {
@@ -74,6 +77,8 @@ public class PollService(ApplicationDbContext context) : IPollService
 
         await _context.SaveChangesAsync(cancellationToken);
 
+        await _hybridCache.RemoveAsync($"polls:{id}:available-questions", cancellationToken);
+
         return Result.Success();
     }
 
@@ -101,6 +106,9 @@ public class PollService(ApplicationDbContext context) : IPollService
         poll.IsPublished = !poll.IsPublished;
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        await _hybridCache.RemoveAsync($"polls:{id}:available-questions", cancellationToken);
+
         return Result.Success();
     }
 }

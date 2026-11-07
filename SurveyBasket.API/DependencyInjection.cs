@@ -1,4 +1,6 @@
-﻿namespace SurveyBasket.API;
+﻿using Microsoft.Extensions.Caching.Hybrid;
+
+namespace SurveyBasket.API;
 
 public static class DependencyInjection
 {
@@ -20,6 +22,7 @@ public static class DependencyInjection
         services.AddMapasterConfiguration();
         services.AddFluentValidationConfiguration();
         services.AddAuthConfiguration(configuration);
+        services.AddCachingConfiguration(configuration);
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPollService, PollService>();
@@ -91,6 +94,26 @@ public static class DependencyInjection
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings?.Key!)),
                 ValidIssuer = jwtSettings?.Issuer,
                 ValidAudience = jwtSettings?.Audience
+            };
+        });
+
+        return services;
+    }
+
+
+    public static IServiceCollection AddCachingConfiguration(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = configuration.GetConnectionString("Redis");
+        });
+
+        services.AddHybridCache(options =>
+        {
+            options.DefaultEntryOptions = new HybridCacheEntryOptions
+            {
+                Expiration = TimeSpan.FromMinutes(10),
+                LocalCacheExpiration = TimeSpan.FromMinutes(5)
             };
         });
 
