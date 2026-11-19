@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Caching.Hybrid;
+﻿using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Caching.Hybrid;
+using SurveyBasket.API.Settings;
 
 namespace SurveyBasket.API;
 
@@ -33,6 +35,9 @@ public static class DependencyInjection
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
 
+        services.Configure<EmailSettings>(configuration.GetSection(nameof(EmailSettings)));
+        services.AddScoped<IEmailService, EmailService>();
+
         return services;
     }
 
@@ -63,7 +68,8 @@ public static class DependencyInjection
     {
 
         services.AddIdentity<ApplicationUser, IdentityRole>()
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
         services.AddSingleton<IJwtProvider, JwtProvider>();
 
@@ -96,6 +102,14 @@ public static class DependencyInjection
                 ValidAudience = jwtSettings?.Audience
             };
         });
+
+        services.Configure<IdentityOptions>(option =>
+        {
+            option.Password.RequiredLength = 8;
+            option.User.RequireUniqueEmail = true;
+            option.SignIn.RequireConfirmedEmail = true;
+        });
+
 
         return services;
     }

@@ -13,4 +13,10 @@ public static class AuthErrors
 
     public static readonly Error RefreshTokenUpdateFailed =
         new("Auth.RefreshTokenUpdateFailed", "Failed to update refresh token", StatusCodes.Status500InternalServerError);
+
+    public static readonly Error InvalidUser =
+    new("User.InvalidUser", "Failed to create user", StatusCodes.Status400BadRequest);
+
+    public static readonly Error EmailNotConfirmed =
+    new("Auth.EmailNotConfirmed", "Eamil is not confirmed", StatusCodes.Status401Unauthorized);
 }
